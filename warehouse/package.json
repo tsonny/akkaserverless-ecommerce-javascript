@@ -1,22 +1,23 @@
 {
     "name": "ecommerce-warehouse",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "eCommerce Warehouse Example app for Akka Serverless",
     "main": "index.js",
     "author": "retgits",
     "license": "Apache2",
+    "type": "module",
     "dependencies": {
         "@grpc/proto-loader": "^0.5.5",
-        "cloudstate": "0.0.3",
+        "@lightbend/akkaserverless-javascript-sdk": "0.7.0-pre-ebf5e9ea",
         "google-protobuf": "^3.14.0",
         "grpc": "^1.24.4"
     },
     "devDependencies": {
-        "chai": "^4.2.0",
+        "chai": "^4.3.4",
         "mocha": "^8.2.1"
     },
     "scripts": {
-        "test": "mocha",
+        "test": "mocha ./test/*.test.js",
         "pretest": "compile-descriptor ./warehouse.proto",
         "build": "compile-descriptor ./warehouse.proto",
         "start": "node index.js"

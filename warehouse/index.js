@@ -1,1 +1,2 @@
-require("./warehouse.js").start();
+import entity from "./warehouse.js";
+entity.start();
