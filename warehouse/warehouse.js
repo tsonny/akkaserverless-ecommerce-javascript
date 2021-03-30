@@ -17,7 +17,8 @@
 /**
  * This service uses the EventSourced state model in Akka Serverless.
  */
-import { EventSourced } from '@lightbend/akkaserverless-javascript-sdk';
+import as from '@lightbend/akkaserverless-javascript-sdk';
+const EventSourced = as.EventSourced;
 
 /**
  * Create a new EventSourced entity with parameters
@@ -160,7 +161,7 @@ function productReceived(newProduct, inventoryItem) {
  * @param {*} inventoryItem the product for which stock needs to be updated
  */
 function stockChanged(stockUpdate, inventoryItem) {
-    console.log(`Updating the current stock level of ${inventoryItem.id} to ${inventoryItem.stock}`)
+    console.log(`Updating the current stock level of ${inventoryItem.id} to ${inventoryItem.stock + stockUpdate.product.stock}`)
     return inventoryItem
 }
 

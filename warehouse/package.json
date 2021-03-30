@@ -4,7 +4,10 @@
     "description": "eCommerce Warehouse Example app for Akka Serverless",
     "main": "index.js",
     "author": "retgits",
-    "license": "Apache2",
+    "license": "Apache-2.0",
+    "repository": {
+        "url": "https://github.com/lightbend-labs/akkaserverless-ecommerce-javascript"
+    },
     "type": "module",
     "dependencies": {
         "@grpc/proto-loader": "^0.5.5",
