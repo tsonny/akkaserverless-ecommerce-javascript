@@ -1,5 +1,5 @@
 import as from '@lightbend/akkaserverless-javascript-sdk';
-import entity from "./warehouse.js";
+import entity from './warehouse.js';
 
 const server = new as.AkkaServerless();
 server.addComponent(entity);

@@ -4,7 +4,7 @@ import users from '../users.js';
 
 describe('Test Users', () => {
     const entityId = '1';
-    const newUser = { "id": entityId, "name": "retgits", "emailAddress": "retgits@example.com" }
+    const newUser = { 'id': entityId, 'name': 'retgits', 'emailAddress': 'retgits@example.com' }
 
     describe('Commands', () => {
         it('Should add a new user...', () => {
@@ -40,7 +40,7 @@ describe('Test Users', () => {
             // Load the service with a new user
             const entity = new MockEventSourcedEntity(users, entityId);
             let result = entity.handleCommand('AddUser', newUser);
-            result = entity.handleCommand('UpdateUserOrders', { "id": entityId, "orderID": "1234" })
+            result = entity.handleCommand('UpdateUserOrders', { 'id': entityId, 'orderID': '1234' })
 
             // There shouldn't be any errors
             expect(entity.error).to.be.undefined;
@@ -56,7 +56,7 @@ describe('Test Users', () => {
         it('Should handle user created events...', () => {
             // Load the userservice with a user
             const entity = new MockEventSourcedEntity(users, entityId);
-            const result = entity.handleEvent({ type: "UserCreated", user: newUser });
+            const result = entity.handleEvent({ type: 'UserCreated', user: newUser });
 
             // There shouldn't be any errors
             expect(entity.error).to.be.undefined;
@@ -66,7 +66,7 @@ describe('Test Users', () => {
             // Load the service with a new user
             const entity = new MockEventSourcedEntity(users, entityId);
             let result = entity.handleCommand('AddUser', newUser);
-            result = entity.handleEvent({ type: "OrderAdded", orderDetails: { "id": entityId, "orderID": "1234" } })
+            result = entity.handleEvent({ type: 'OrderAdded', orderDetails: { 'id': entityId, 'orderID': '1234' } })
 
             // There shouldn't be any errors
             expect(entity.error).to.be.undefined;

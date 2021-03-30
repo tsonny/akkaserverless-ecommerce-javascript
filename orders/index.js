@@ -1,5 +1,5 @@
 import as from '@lightbend/akkaserverless-javascript-sdk';
-import entity from "./orders.js";
+import entity from './orders.js';
 
 const server = new as.AkkaServerless();
 server.addComponent(entity);

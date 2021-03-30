@@ -1,10 +1,10 @@
 # Akka Serverless - eCommerce Example App
 
-A JavaScript-based ecommernce example app for [Akka Serverless](https://developer.lightbend.com/docs/akka-serverless/)
+A JavaScript-based eCommerce example app for [Akka Serverless](https://developer.lightbend.com/docs/akka-serverless/)
 
 Features include:
 
-* Different eventsourced services for "warehouse", "orders", and "users"
+* Different eventsourced services for `warehouse`, `orders`, and `users`
 
 ## What is this example?
 

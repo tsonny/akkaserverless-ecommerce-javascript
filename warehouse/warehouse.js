@@ -31,13 +31,13 @@ const entity = new EventSourced(
     {
         // A persistence id for all value entities of this type. This will be prefixed onto 
         // the entityId when storing the state for this entity.
-        entityType: "inventory",
+        entityType: 'inventory',
         
         // A snapshot will be persisted every time this many events are emitted.
         snapshotEvery: 100,
         
         // The directories to include when looking up imported protobuf files.
-        includeDirs: ["./"],
+        includeDirs: ['./'],
         
         // Whether serialization of primitives should be supported when serializing events 
         // and snapshots.
@@ -98,7 +98,7 @@ entity.setBehavior(inventory => {
 function receiveProduct(newProduct, inventoryItem, ctx) {
     console.log(`Creating a new product entry for ${newProduct.id}...`)
     ctx.emit({
-        type: "ProductReceived",
+        type: 'ProductReceived',
         product: newProduct
     })
     return newProduct    
@@ -127,7 +127,7 @@ function getProductDetails(request, inventoryItem) {
 function updateStock(request, inventoryItem, ctx) {
     console.log(`Updating inventory for ${request.id} from ${inventoryItem.stock} to ${inventoryItem.stock + request.stock}`)
     ctx.emit({
-        type: "StockChanged",
+        type: 'StockChanged',
         product: request
     })
     inventoryItem.stock = inventoryItem.stock + request.stock

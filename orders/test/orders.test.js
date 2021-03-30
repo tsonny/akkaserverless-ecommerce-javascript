@@ -4,8 +4,8 @@ import orders from '../orders.js';
 
 describe('Test Orders', () => {
     const entityId = '1';
-    const newOrder1 = { "userID": entityId, "orderID": "4557", "items":[ { "productID": "turkey", "quantity": 12, "price": 10 } ] } 
-    const newOrder2 = { "userID": entityId, "orderID": "1337", "items":[ { "productID": "red pants", "quantity": 300, "price": 99 } ] } 
+    const newOrder1 = { 'userID': entityId, 'orderID': '4557', 'items':[ { 'productID': 'turkey', 'quantity': 12, 'price': 10 } ] } 
+    const newOrder2 = { 'userID': entityId, 'orderID': '1337', 'items':[ { 'productID': 'red pants', 'quantity': 300, 'price': 99 } ] } 
 
     describe('Commands', () => {
         it('Should add a new order...', () => {
@@ -30,7 +30,7 @@ describe('Test Orders', () => {
             // Load the service with a new user
             const entity = new MockEventSourcedEntity(orders, entityId);
             let result = entity.handleCommand('AddOrder', newOrder1);
-            result = entity.handleCommand('GetOrderDetails', { "userID": entityId, "orderID": "4557" })
+            result = entity.handleCommand('GetOrderDetails', { 'userID': entityId, 'orderID': '4557' })
 
             // The orders details should match the user that was created
             expect(result).to.deep.equal(newOrder1);
@@ -61,7 +61,7 @@ describe('Test Orders', () => {
         it('Should handle order added events...', () => {
             // Load the service with a new user
             const entity = new MockEventSourcedEntity(orders, entityId);
-            const result = entity.handleEvent({ type: "OrderAdded", order: newOrder1 })
+            const result = entity.handleEvent({ type: 'OrderAdded', order: newOrder1 })
 
             // There shouldn't be any errors
             expect(entity.error).to.be.undefined;

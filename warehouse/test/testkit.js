@@ -16,7 +16,7 @@ export class MockEventSourcedEntity {
         this.entityId = entityId;
         this.state = entity.initial(entityId);
         this.grpcService = entity.serviceName
-            .split(".")
+            .split('.')
             .reduce((obj, part) => obj[part], entity.grpc).service;
     }
 

@@ -26,18 +26,18 @@
   * * The fully qualified name of the service that provides this entities interface
   */
 const entity = new EventSourced(
-    ["orders.proto"],
-    "ecommerce.Orders",
+    ['orders.proto'],
+    'ecommerce.Orders',
     {
         // A persistence id for all value entities of this type. This will be prefixed onto 
         // the entityId when storing the state for this entity.
-        entityType: "orders",
+        entityType: 'orders',
         
         // A snapshot will be persisted every time this many events are emitted.
         snapshotEvery: 100,
         
         // The directories to include when looking up imported protobuf files.
-        includeDirs: ["./"],
+        includeDirs: ['./'],
         
         // Whether serialization of primitives should be supported when serializing events 
         // and snapshots.
@@ -88,7 +88,7 @@ entity.setBehavior(orders => {
 function addOrder(newOrder, orderHistory, ctx) {
     console.log(`Adding order ${newOrder.orderID} to the history of user ${newOrder.userID}`)
     ctx.emit({
-        type: "OrderAdded",
+        type: 'OrderAdded',
         order: newOrder
     })
     return newOrder
