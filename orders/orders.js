@@ -1,16 +1,61 @@
-const EventSourced = require("cloudstate").EventSourced;
+/**
+ * Copyright 2021 Lightbend Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+/**
+ * This service uses the EventSourced state model in Akka Serverless.
+ */
+ import as from '@lightbend/akkaserverless-javascript-sdk';
+ const EventSourced = as.EventSourced;
+ 
+ /**
+  * Create a new EventSourced entity with parameters
+  * * An array of protobuf files where the entity can find message definitions
+  * * The fully qualified name of the service that provides this entities interface
+  */
 const entity = new EventSourced(
-    "orders.proto",
+    ["orders.proto"],
     "ecommerce.Orders",
     {
-        persistenceId: "orders",
-        snapshotEvery: 5,
+        // A persistence id for all value entities of this type. This will be prefixed onto 
+        // the entityId when storing the state for this entity.
+        entityType: "orders",
+        
+        // A snapshot will be persisted every time this many events are emitted.
+        snapshotEvery: 100,
+        
+        // The directories to include when looking up imported protobuf files.
         includeDirs: ["./"],
+        
+        // Whether serialization of primitives should be supported when serializing events 
+        // and snapshots.
+        serializeAllowPrimitives: true,
+        
+        // Whether serialization should fallback to using JSON if the state can't be serialized 
+        // as a protobuf.
         serializeFallbackToJson: true
     }
 );
 
+/**
+ * Set a callback to create the initial state. This is what is created if there is no snapshot
+ * to load, in other words when the entity is created and nothing else exists for it yet.
+ *
+ * The userID parameter can be ignored, it's the id of the entity which is automatically 
+ * associated with all events and state for this entity.
+ */
 entity.setInitial(userID => ({}));
 
 entity.setBehavior(orders => {
@@ -35,6 +80,7 @@ entity.setBehavior(orders => {
 /**
  * addOrder is the entry point for the API to add a new order to a user. It logs the user
  * and order data and emits an OrderAdded event to add the order into the orderhistory
+ * 
  * @param {*} newOrder the order to be added
  * @param {*} orderHistory an empty placeholder
  * @param {*} ctx the Cloudstate context
@@ -51,6 +97,7 @@ function addOrder(newOrder, orderHistory, ctx) {
 /**
  * getOrderDetails is the entry point for the API that returns a single order for
  * a given user. If the order is not found, an error is thrown.
+ * 
  * @param {*} request the user to get the order history for and the orderID to find
  * @param {*} orderHistory the entire state for the user (the entity) from which to filter the order
  * @param {*} ctx the Cloudstate context
@@ -72,11 +119,12 @@ function getOrderDetails(request, orderHistory, ctx) {
 /**
  * getOrderHistory is the entry point for the API that returns the entire order history for
  * a given user
+ * 
  * @param {*} request the user to get the order history for
  * @param {*} orderHistory the entire state for the user (the entity)
  */
 function getOrderHistory(request, orderHistory) {
-    console.log(`Getting all orders for ${request.userID}`)
+    console.log(`Getting all orders for ${orderHistory.userID}`)
     return orderHistory
 }
 
@@ -101,4 +149,4 @@ function orderAdded(orderInfo, orderHistory) {
     return orderHistory
 }
 
-module.exports = entity;
+export default entity;

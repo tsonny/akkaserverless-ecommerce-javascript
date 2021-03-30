@@ -1,18 +1,17 @@
 syntax = "proto3";
 
+import "akkaserverless/annotations.proto";
 import "google/api/annotations.proto";
-import "cloudstate/entity_key.proto";
-import "cloudstate/eventing.proto";
 
 package ecommerce;
 
 message AllOrders {
-    string userID = 1 [(.cloudstate.entity_key) = true];
+    string userID = 1 [(akkaserverless.field).entity_key = true];
     repeated Order orders = 2;
 }
 
 message Order {
-    string userID = 1 [(.cloudstate.entity_key) = true];
+    string userID = 1 [(akkaserverless.field).entity_key = true];
     string orderID = 2;
     repeated OrderItem items = 3;
 }
@@ -24,12 +23,12 @@ message OrderItem {
 }
 
 message GetOrder {
-    string userID = 1 [(.cloudstate.entity_key) = true];
+    string userID = 1 [(akkaserverless.field).entity_key = true];
     string orderID = 2;
 }
 
 message GetOrderHistory {
-    string userID = 1 [(.cloudstate.entity_key) = true];
+    string userID = 1 [(akkaserverless.field).entity_key = true];
 }
 
 service Orders {
