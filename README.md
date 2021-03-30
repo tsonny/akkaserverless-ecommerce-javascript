@@ -4,7 +4,7 @@ A JavaScript-based ecommernce example app for [Akka Serverless](https://develope
 
 Features include:
 
-* Different eventsources services for "warehouse", "orders", and "users"
+* Different eventsourced services for "warehouse", "orders", and "users"
 
 ## What is this example?
 
@@ -122,9 +122,9 @@ curl --request POST \
 }'
 ```
 
-### Users
+#### Users
 
-#### New User
+##### New User
 
 ```bash
 curl --request POST \
@@ -157,7 +157,7 @@ curl --request POST \
 }'
 ```
 
-#### Order
+#### Orders
 
 ##### Add Order
 
