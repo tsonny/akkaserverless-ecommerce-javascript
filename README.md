@@ -4,7 +4,7 @@ A JavaScript-based eCommerce example app for [Akka Serverless](https://developer
 
 Features include:
 
-* Different eventsourced services for `warehouse`, `orders`, and `users`
+* Different eventsourced services for `warehouse`, `orders`, `users`, and `cart`
 * An overview of how the API and domain are separated in different protobuf files
 * Various ways of using the HTTP annotation
 
