@@ -93,8 +93,8 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/cart/1/items/add \
   --header 'Content-Type: application/json' \
   --data '{
-	"user_id": "1", 
-	"product_id": "turkey",
+	"userId": "1", 
+	"productId": "turkey",
   "name": "delicious turkey",
   "quantity": 2
 }'
@@ -107,8 +107,8 @@ curl --request POST \
   --url https://<your Akka Serverless endpoint>/cart/1/items/turkey/remove \
   --header 'Content-Type: application/json' \
   --data '{
-	"user_id": "1", 
-	"product_id": "turkey"
+	"userId": "1", 
+	"productId": "turkey"
 }'
 ```
 
@@ -119,7 +119,7 @@ curl --request GET \
   --url https://<your Akka Serverless endpoint>/carts/1 \
   --header 'Content-Type: application/json' \
   --data '{
-	"user_id": "1", 
+	"userId": "1", 
 }'
 ```
 
