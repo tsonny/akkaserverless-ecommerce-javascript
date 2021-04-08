@@ -30,7 +30,7 @@ syntax = "proto3";
  * In this case, the ecommerce package is used for all services in this
  * repository and the persistence package is used for all domain objects
  */
- package ecommerce;
+package ecommerce;
 
 /**
  * Imports allow you to use definitions from other protobuf files. In

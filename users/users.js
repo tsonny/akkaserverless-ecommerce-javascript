@@ -18,14 +18,14 @@
  * This service uses the EventSourced state model in Akka Serverless.
  */
  import as from '@lightbend/akkaserverless-javascript-sdk';
- const EventSourced = as.EventSourced;
+ const EventSourcedEntity = as.EventSourcedEntity;
  
  /**
   * Create a new EventSourced entity with parameters
   * * An array of protobuf files where the entity can find message definitions
   * * The fully qualified name of the service that provides this entities interface
   */
-const entity = new EventSourced(
+const entity = new EventSourcedEntity(
     'users.proto',
     'ecommerce.Users',
     {
