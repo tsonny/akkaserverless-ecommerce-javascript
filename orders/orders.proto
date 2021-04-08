@@ -1,37 +1,116 @@
+/**
+ * Copyright 2021 Lightbend Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * This file contains the public interface, the API, of the warehouse.
+ * As a best practice, the external interface and the internal events should
+ * be in different files
+ */
+
+/**
+ * Specify the version of the Protobuf syntax
+ */
 syntax = "proto3";
 
+ /**
+  * Packages prevent name clashes between protocol messages
+  * In this case, the ecommerce package is used for all services in this
+  * repository and the persistence package is used for all domain objects
+  */
+package ecommerce;
+ 
+ /**
+  * Imports allow you to use definitions from other protobuf files. In
+  * this case:
+  * akkaserverless/annotations.proto contains definitions
+  * to work with Akka Serverless.
+  * google/api/annotations.proto contains definitions to add
+  * HTTP based endpoints
+  */
 import "akkaserverless/annotations.proto";
 import "google/api/annotations.proto";
 
-package ecommerce;
-
+/**
+ * The AllOrders message represents all orders for a user and is used as response
+ * for the GetAllOrders method.
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message AllOrders {
     string userID = 1 [(akkaserverless.field).entity_key = true];
     repeated Order orders = 2;
 }
 
+/**
+ * The Order message represents a single Order and is used as response
+ * for the GetOrderDetails method.
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message Order {
     string userID = 1 [(akkaserverless.field).entity_key = true];
     string orderID = 2;
     repeated OrderItem items = 3;
 }
 
+/**
+ * The OrderItem message is used in various messages to represent
+ * different orders of a user
+ */
 message OrderItem {
     string productID = 1;
     int32 quantity = 2;
     float price = 3;
 }
 
+
+/**
+ * The GetOrder message is a request to get the order details of a specific
+ * user's order. 
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message GetOrder {
     string userID = 1 [(akkaserverless.field).entity_key = true];
     string orderID = 2;
 }
 
+/**
+ * The GetOrderHistory message is a request to get the orders of a specific
+ * user. 
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message GetOrderHistory {
     string userID = 1 [(akkaserverless.field).entity_key = true];
 }
 
-service Orders {
+/**
+ * The OrderService shows all rpc methods that the Order service can handle
+ * The names of the rpc methods should match the command handler names in
+ * the code.
+ */ 
+service OrderService {
+    /**
+     * The entity type determines what kind of prefix entities get
+     * when persisted
+     */
+    option (akkaserverless.service).entity.type = ".persistence.Order";
+
+    /**
+     * The AddOrder method is called when a new order is added to the 
+     * system. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the newly added order.
+     */
     rpc AddOrder (Order) returns (Order) {
         option (google.api.http) = {
             post: "/order/{userID}",
@@ -39,6 +118,11 @@ service Orders {
         };
     }
 
+    /**
+     * The GetOrderDetails method is called to get an order of a user in 
+     * the system. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the requested user.
+     */
     rpc GetOrderDetails (GetOrder) returns (Order) {
         option (google.api.http) = {
             get: "/order/{userID}",
@@ -46,6 +130,11 @@ service Orders {
         };
     }
 
+    /**
+     * The GetAllOrders method is called to get the orders of a user in 
+     * the system. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the requested user.
+     */
     rpc GetAllOrders (GetOrderHistory) returns (AllOrders) {
         option (google.api.http) = {
             get: "/order/{userID}/all"
