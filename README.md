@@ -5,6 +5,8 @@ A JavaScript-based eCommerce example app for [Akka Serverless](https://developer
 Features include:
 
 * Different eventsourced services for `warehouse`, `orders`, and `users`
+* An overview of how the API and domain are separated in different protobuf files
+* Various ways of using the HTTP annotation
 
 ## What is this example?
 
@@ -37,9 +39,9 @@ export DOCKER_USER=<your dockerhub username>
 
 ## Build containers for each of the services
 BASE_DIR=`pwd`
-for i in orders users warehouse; do
+for i in orders users warehouse cart; do
   cd $BASE_DIR/$i
-  docker build . -t $DOCKER_REGISTRY/$DOCKER_USER/$i:1.0.0
+  docker build . -t $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0
 done
 ```
 
@@ -53,16 +55,16 @@ export DOCKER_REGISTRY=docker.io
 export DOCKER_USER=<your dockerhub username>
 
 ## Push the containers to a container registry
-for i in orders users warehouse; do
-  docker push $DOCKER_REGISTRY/$DOCKER_USER/$i:1.0.0
+for i in orders users warehouse cart; do
+  docker push $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0
 done
 
 ## Set your Akka Serverless project name
 export AKKASLS_PROJECT=<your project>
 
 ## Deploy the services to your Akka Serverless project
-for i in orders users warehouse; do
-  akkasls svc deploy $i $DOCKER_REGISTRY/$DOCKER_USER/$i:1.0.0 --project $AKKASLS_PROJECT
+for i in orders users warehouse cart; do
+  akkasls svc deploy $i $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0 --project $AKKASLS_PROJECT
 done
 ```
 
@@ -75,85 +77,60 @@ To test your services, you'll first need to expose them on a public URL
 export AKKASLS_PROJECT=<your project>
 
 ## Expose the services with a public HTTP endpoint
-for i in orders users warehouse; do
+for i in orders users warehouse cart; do
   akkasls svc expose $i --enable-cors --project $AKKASLS_PROJECT
 done
 ```
 
 From there, you can use the endpoints with the below cURL commands for each of the operations that the service exposes.
 
-#### Warehouse
+#### Cart
 
-##### Receive Product
+##### Add item to cart
 
 ```bash
 curl --request POST \
-  --url https://<your Akka Serverless endpoint>/warehouse/5c61f497e5fdadefe84ff9b9 \
+  --url https://<your Akka Serverless endpoint>/cart/1/items/add \
   --header 'Content-Type: application/json' \
   --data '{
-    "id": "5c61f497e5fdadefe84ff9b9",
-    "name": "Yoga Mat",
-    "description": "Limited Edition Mat",
-    "imageURL": "/static/images/yogamat_square.jpg",
-    "price": 62.5,
-    "stock": 5,
-    "tags": [
-        "mat"
-    ]
+	"user_id": "1", 
+	"product_id": "turkey",
+  "name": "delicious turkey",
+  "quantity": 2
 }'
 ```
 
-##### Get Product Details
+##### Remove item from cart
+
+```bash
+curl --request POST \
+  --url https://<your Akka Serverless endpoint>/cart/1/items/turkey/remove \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"user_id": "1", 
+	"product_id": "turkey"
+}'
+```
+
+##### Get cart
 
 ```bash
 curl --request GET \
-  --url https://<your Akka Serverless endpoint>/warehouse/5c61f497e5fdadefe84ff9b9
-```
-
-##### Update Stock
-
-```bash
-curl --request POST \
-  --url https://<your Akka Serverless endpoint>/warehouse/5c61f497e5fdadefe84ff9b9/stock \
+  --url https://<your Akka Serverless endpoint>/carts/1 \
   --header 'Content-Type: application/json' \
   --data '{
-    "id": "5c61f497e5fdadefe84ff9b9",
-    "stock": 10
+	"user_id": "1", 
 }'
 ```
 
-#### Users
-
-##### New User
-
-```bash
-curl --request POST \
-  --url https://<your Akka Serverless endpoint>/user/1 \
-  --header 'Content-Type: application/json' \
-  --data '{
-	"id": "1",
-	"name": "retgits",
-	"emailAddress": "retgits@example.com",
-	"orderID":[]
-}'
-```
-
-##### Get User Details
+or
 
 ```bash
 curl --request GET \
-  --url https://<your Akka Serverless endpoint>/user/1
-```
-
-##### Update User Orders
-
-```bash
-curl --request POST \
-  --url https://<your Akka Serverless endpoint>/user/1/order \
+  --url https://<your Akka Serverless endpoint>/carts/1/items \
   --header 'Content-Type: application/json' \
   --data '{
-	"id": "1",
-	"orderID": "1234"
+	"user_id": "1", 
 }'
 ```
 
@@ -195,6 +172,112 @@ curl --request GET \
 ```bash
 curl --request GET \
   --url https://<your Akka Serverless endpoint>/order/1/all
+```
+
+#### Users
+
+##### New User
+
+```bash
+curl --request POST \
+  --url https://<your Akka Serverless endpoint>/user/1 \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"id": "1",
+	"name": "retgits",
+	"emailAddress": "retgits@example.com",
+	"orderID":[]
+}'
+```
+
+##### Get User Details
+
+```bash
+curl --request GET \
+  --url https://<your Akka Serverless endpoint>/user/1
+```
+
+##### Update User Orders
+
+```bash
+curl --request POST \
+  --url https://<your Akka Serverless endpoint>/user/1/order \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"id": "1",
+	"orderID": "1234"
+}'
+```
+
+
+#### Warehouse
+
+##### Receive Product
+
+```bash
+curl --request POST \
+  --url https://<your Akka Serverless endpoint>/warehouse/5c61f497e5fdadefe84ff9b9 \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "id": "5c61f497e5fdadefe84ff9b9",
+    "name": "Yoga Mat",
+    "description": "Limited Edition Mat",
+    "imageURL": "/static/images/yogamat_square.jpg",
+    "price": 62.5,
+    "stock": 5,
+    "tags": [
+        "mat"
+    ]
+}'
+```
+
+##### Get Product Details
+
+```bash
+curl --request GET \
+  --url https://<your Akka Serverless endpoint>/warehouse/5c61f497e5fdadefe84ff9b9
+```
+
+##### Update Stock
+
+```bash
+curl --request POST \
+  --url https://<your Akka Serverless endpoint>/warehouse/5c61f497e5fdadefe84ff9b9/stock \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "id": "5c61f497e5fdadefe84ff9b9",
+    "stock": 10
+}'
+```
+
+### Testing your services locally
+
+To test your services, you'll need to run the proxy on your own machine and use the containers you've built.
+
+```bash
+## Set your dockerhub username
+export DOCKER_REGISTRY=docker.io
+export DOCKER_USER=<your dockerhub username>
+export SERVICE= ## this can be one of orders users warehouse cart 
+
+## Create a docker bridged network
+docker network create -d bridge akkasls
+
+## Run your userfunction
+docker run -d --name userfunction --hostname userfunction --network akkasls $DOCKER_REGISTRY/$DOCKER_USER/$SERVICE:2.0.0
+
+## Run the proxy
+docker run -d --name proxy --network akkasls -p 9000:9000 --env USER_FUNCTION_HOST=userfunction gcr.io/akkaserverless-public/akkaserverless-proxy:0.7.0-beta.1 -Dconfig.resource=dev-mode.conf -Dcloudstate.proxy.protocol-compatibility-check=false
+```
+
+To clean it all up, you can run
+
+```bash
+docker stop userfunction
+docker rm userfunction
+docker stop proxy
+docker rm proxy
+docker network rm akkasls
 ```
 
 ## Contributing
