@@ -15,12 +15,12 @@
  */
 
 import as from '@lightbend/akkaserverless-javascript-sdk';
-import entity from './warehouse.js';
+import entity from './cart.js';
 
 /**
  * Create a new Akka Serverless server and bind the entity from
- * warehouse.js to it. The server will listen on port 8080 and 
- * bind to all interfaces
+ * cart.js to it. The server will listen on port 8080 and bind to
+ * all interfaces
  */
 const server = new as.AkkaServerless();
 server.addComponent(entity);

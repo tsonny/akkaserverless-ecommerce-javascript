@@ -1,22 +1,26 @@
 {
     "name": "ecommerce-users",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "eCommerce Users Example app for Akka Serverless",
     "main": "index.js",
     "author": "retgits",
-    "license": "Apache2",
+    "license": "Apache-2.0",
+    "repository": {
+        "url": "https://github.com/lightbend-labs/akkaserverless-ecommerce-javascript"
+    },
+    "type": "module",
     "dependencies": {
         "@grpc/proto-loader": "^0.5.5",
-        "cloudstate": "0.0.3",
+        "@lightbend/akkaserverless-javascript-sdk": "^0.7.0-beta.1",
         "google-protobuf": "^3.14.0",
         "grpc": "^1.24.4"
     },
     "devDependencies": {
-        "chai": "^4.2.0",
+        "chai": "^4.3.4",
         "mocha": "^8.2.1"
     },
     "scripts": {
-        "test": "mocha",
+        "test": "mocha ./test/*.test.js",
         "pretest": "compile-descriptor ./users.proto",
         "build": "compile-descriptor ./users.proto",
         "start": "node index.js"

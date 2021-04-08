@@ -1,28 +1,96 @@
+/**
+ * Copyright 2021 Lightbend Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * This file contains the public interface, the API, of the warehouse.
+ * As a best practice, the external interface and the internal events should
+ * be in different files
+ */
+
+/**
+ * Specify the version of the Protobuf syntax
+ */
 syntax = "proto3";
 
-import "google/api/annotations.proto";
-import "cloudstate/entity_key.proto";
-import "cloudstate/eventing.proto";
-
+ /**
+  * Packages prevent name clashes between protocol messages
+  * In this case, the ecommerce package is used for all services in this
+  * repository and the persistence package is used for all domain objects
+  */
 package ecommerce;
+ 
+ /**
+  * Imports allow you to use definitions from other protobuf files. In
+  * this case:
+  * akkaserverless/annotations.proto contains definitions
+  * to work with Akka Serverless.
+  * google/api/annotations.proto contains definitions to add
+  * HTTP based endpoints
+  */
+import "akkaserverless/annotations.proto";
+import "google/api/annotations.proto";
 
+/**
+ * The User message represents a single user and is used as response
+ * for the GetUserDetails method.
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message User {
-    string id = 1 [(.cloudstate.entity_key) = true];
+    string id = 1 [(akkaserverless.field).entity_key = true];
     string name = 2;
     string emailAddress = 3;
     repeated string orderID = 4;
 }
 
+/**
+ * The GetUser message is a request to get the details of a specific
+ * user. 
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message GetUser {
-    string id = 1 [(.cloudstate.entity_key) = true];
+    string id = 1 [(akkaserverless.field).entity_key = true];
 }
 
+/**
+ * The AddOrder message is a request to add the details of a specific
+ * order to a user. 
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
 message AddOrder {
-    string id = 1 [(.cloudstate.entity_key) = true];
+    string id = 1 [(akkaserverless.field).entity_key = true];
     string orderID = 2;
 }
 
-service Users {
+/**
+ * The UserService shows all rpc methods that the User service can handle
+ * The names of the rpc methods should match the command handler names in
+ * the code.
+ */ 
+service UserService {
+    /**
+     * The entity type determines what kind of prefix entities get
+     * when persisted
+     */
+     option (akkaserverless.service).entity.type = ".persistence.User";
+
+    /**
+     * The AddUser method is called when a new user is added to the 
+     * system. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the newly added user.
+     */
     rpc AddUser (User) returns (User) {
         option (google.api.http) = {
             post: "/user/{id}",
@@ -30,12 +98,22 @@ service Users {
         };
     }
 
+    /**
+     * The GetUserDetails method is called to get the details of a user in 
+     * the system. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the requested user.
+     */
     rpc GetUserDetails (GetUser) returns (User) {
         option (google.api.http) = {
             get: "/user/{id}"
         };
     }
 
+    /**
+     * The UpdateUserOrders method is called to update the orders a user of the system
+     * has made. The HTTP annotation makes this operation available over HTTP 
+     * on the mentioned URL. The response is the product with the new order.
+     */
     rpc UpdateUserOrders (AddOrder) returns (AddOrder) {
         option (google.api.http) = {
             post: "/user/{id}/order",
