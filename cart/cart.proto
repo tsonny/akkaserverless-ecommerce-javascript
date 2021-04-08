@@ -1,0 +1,145 @@
+/**
+ * Copyright 2021 Lightbend Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * This file contains the public interface, the API, of the shopping cart.
+ * As a best practice, the external interface and the internal events should
+ * be in different files
+ */
+
+/**
+ * Specify the version of the Protobuf syntax
+ */
+syntax = "proto3";
+
+/**
+ * Packages prevent name clashes between protocol messages
+ * In this case, the ecommerce package is used for all services in this
+ * repository and the persistence package is used for all domain objects
+ */
+ package ecommerce;
+
+/**
+ * Imports allow you to use definitions from other protobuf files. In
+ * this case:
+ * akkaserverless/annotations.proto contains definitions
+ * to work with Akka Serverless.
+ * google/api/annotations.proto contains definitions to add
+ * HTTP based endpoints
+ * google/protobuf/empty.proto contains definitions to send back
+ * empty responses
+ */
+import "akkaserverless/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+/**
+ * The AddLineItem is a request message to add an item to 
+ * a shopping cart (where no response message is sent back).
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
+message AddLineItem {
+  string user_id = 1 [(akkaserverless.field).entity_key = true];
+  string product_id = 2;
+  string name = 3;
+  int32 quantity = 4;
+}
+
+/**
+ * The RemoveLineItem is a request message to remove an item from 
+ * a shopping cart (where no response message is sent back).
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
+message RemoveLineItem {
+  string user_id = 1 [(akkaserverless.field).entity_key = true];
+  string product_id = 2;
+}
+
+/**
+ * The GetShoppingCart is a request message to get a shopping cart
+ * for a specific customer (where cart is the response message).
+ * The entity key is used by Akka Serverless to find the correct entity
+ */
+message GetShoppingCart {
+  string user_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+/**
+ * The LineItem message is used in the Cart message to represent
+ * different items in the cart
+ */
+message LineItem {
+  string product_id = 1;
+  string name = 2;
+  int32 quantity = 3;
+}
+
+/**
+ * The Cart message is the represents a shopping cart for a specific
+ * customer. 
+ */
+message Cart {
+  repeated LineItem items = 1;
+}
+
+/**
+ * The CartService shows all rpc methods that the Cart service can handle
+ * The names of the rpc methods should match the command handler names in
+ * the code.
+ */ 
+service CartService {
+    /**
+     * The entity type determines what kind of prefix entities get
+     * when persisted
+     */
+    option (akkaserverless.service).entity.type = ".persistence.Cart";
+
+    /**
+     * The AddItem method is called when a new item is added to the cart.
+     * The HTTP annotation makes this operation available over HTTP on the
+     * mentioned URL. The response is an empty message.
+     */
+    rpc AddItem(AddLineItem) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/cart/{user_id}/items/add"
+            body: "*"
+        };
+    }
+
+    /**
+     * The RemoveItem method is called when an item is removed from the cart.
+     * The HTTP annotation makes this operation available over HTTP on the
+     * mentioned URL. The response is an empty message.
+     */
+    rpc RemoveItem(RemoveLineItem) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/cart/{user_id}/items/{product_id}/remove";
+    }
+
+    /**
+     * The GetCart method is called when the cart for a user is retrieved.
+     * The HTTP annotation makes this operation available over HTTP on the
+     * mentioned URL. The response is a Cart message.
+     */
+    rpc GetCart(GetShoppingCart) returns (Cart) {
+        option (google.api.http) = {
+            get: "/carts/{user_id}"
+            additional_bindings: {
+                get: "/carts/{user_id}/items"
+                response_body: "items"
+            }
+        };
+    }
+}

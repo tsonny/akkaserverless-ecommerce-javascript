@@ -1,0 +1,87 @@
+/**
+ * Copyright 2021 Lightbend Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Messages in Akka Serverless get persisted in protobuf format to
+ * save on storage space in. This protobuf file contains the events
+ * and state models of things that get persisted. The service interface,
+ * the API, is located in cart.proto
+ */
+
+/**
+ * Specify the version of the Protobuf syntax
+ */
+syntax = "proto3";
+
+/**
+ * Packages prevent name clashes between protocol messages
+ * In this case, the ecommerce package is used for all services in this
+ * repository and the persistence package is used for all domain objects
+ */
+package ecommerce.persistence;
+
+/**
+ * Imports allow you to use definitions from other protobuf files. In
+ * this case, the akkaserverless/annotations.proto contains definitions
+ * to work with Akka Serverless.
+ */
+import "akkaserverless/annotations.proto";
+
+/**
+ * This section describes how these domain events relate to 
+ * the event sourced entity. The state and events are found in
+ * this file.
+ */
+option (akkaserverless.file).event_sourced_entity = {
+    name : "ShoppingCart"
+    entity_type : "ShoppingCart"
+    state : { type: "Cart" }
+    event : { type: "ItemAdded" }
+    event : { type: "ItemRemoved" }
+};
+
+/**
+ * The ItemAdded message is the event that is sent
+ * when an item is added to the shopping cart
+ */
+message ItemAdded {
+  LineItem item = 1;
+}
+
+/**
+ * The ItemRemoved message is the event that is sent
+ * when an item is removed from the shopping cart
+ */
+message ItemRemoved {
+  string productId = 1;
+}
+
+/**
+ * The Cart message is the state that is persisted
+ * for the Event Sourced entity
+ */
+message Cart {
+  repeated LineItem items = 1;
+}
+
+/**
+ * The LineItem message is used in multiple messages
+ */
+message LineItem {
+  string productId = 1;
+  string name = 2;
+  int32 quantity = 3;
+}
