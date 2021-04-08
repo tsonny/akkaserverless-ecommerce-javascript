@@ -24,68 +24,62 @@
 /**
  * Specify the version of the Protobuf syntax
  */
- syntax = "proto3";
+syntax = "proto3";
 
- /**
+/**
   * Packages prevent name clashes between protocol messages
   * In this case, the ecommerce package is used for all services in this
   * repository and the persistence package is used for all domain objects
   */
- package ecommerce.persistence;
+package ecommerce.persistence;
  
- /**
+/**
   * Imports allow you to use definitions from other protobuf files. In
   * this case, the akkaserverless/annotations.proto contains definitions
   * to work with Akka Serverless.
   */
- import "akkaserverless/annotations.proto";
+import "akkaserverless/annotations.proto";
  
- /**
+/**
   * This section describes how these domain events relate to 
   * the event sourced entity. The state and events are found in
   * this file.
   */
- option (akkaserverless.file).event_sourced_entity = {
-     name : "Product"
-     entity_type : "Product"
-     state : { type: "Product" }
-     event : { type: "ProductReceived" }
-     event : { type: "StockChanged" }
+option (akkaserverless.file).event_sourced_entity = {
+     name : "User"
+     entity_type : "User"
+     state : { type: "User" }
+     event : { type: "UserCreated" }
+     event : { type: "OrderAdded" }
  };
 
 /**
- * The Product message is the state that is persisted
+ * The User message is the state that is persisted
  * for the Event Sourced entity
  */
-message Product {
+message User {
     string id = 1;
     string name = 2;
-    string description = 3;
-    string imageURL = 4;
-    float price = 5;
-    int32 stock = 6;
-    repeated string tags = 7;
+    string emailAddress = 3;
+    repeated string orderID = 4;
 }
 
 /**
- * The ProductReceived message is the event that is sent
- * when a product is received by the warehouse
+ * The UserCreated message is the event that is sent
+ * when a user is added to the system
  */
-message ProductReceived {
+message UserCreated {
     string id = 1;
     string name = 2;
-    string description = 3;
-    string imageURL = 4;
-    float price = 5;
-    int32 stock = 6;
-    repeated string tags = 7;
+    string emailAddress = 3;
+    repeated string orderID = 4;
 }
 
 /**
- * The StockChanged message is the event that is sent
- * when the stock of a product is updated
+ * The OrderAdded message is the event that is sent
+ * when an order is added to a user
  */
-message StockChanged {
+message OrderAdded {
     string id = 1;
-    int32 stock = 6;
+    string orderID = 2;
 }

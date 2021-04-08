@@ -136,6 +136,7 @@ function receiveProduct(newProduct, inventoryItem, ctx) {
  * 
  * @param {*} request contains the productID for which the request is made
  * @param {*} inventoryItem the stock keeping unit (the entity) that contains product details for this request
+ * @returns
  */
 function getProductDetails(request, inventoryItem) {
     console.log(`Getting inventory for ${inventoryItem.id}...`)
@@ -149,6 +150,7 @@ function getProductDetails(request, inventoryItem) {
  * @param {*} request contains the productID and change in stock
  * @param {*} inventoryItem the stock keeping unit (the entity) that contains product details for this request
  * @param {*} ctx the Akka Serverless context
+ * @returns
  */
 function updateStock(request, inventoryItem, ctx) {
     console.log(`Updating inventory for ${request.id} from ${inventoryItem.stock} to ${inventoryItem.stock + request.stock}`)
