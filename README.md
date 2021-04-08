@@ -22,8 +22,9 @@ To build and deploy this example application, you'll need to have:
 
 ## Build, Deploy, and Test
 
-Currently, there are three services built to support this eCommerce example app:
+Currently, there are four services built to support this eCommerce example app:
 
+* [Cart](./cart): This is a shopping cart service
 * [Orders](./orders): This service keeps track of the order history of users
 * [Users](./users): This service keeps track of all users and has a collection of **orderIDs** to get order details from the orders service
 * [Warehouse](./warehouse): This service keeps track of all the inventory
@@ -41,6 +42,8 @@ export DOCKER_USER=<your dockerhub username>
 BASE_DIR=`pwd`
 for i in orders users warehouse cart; do
   cd $BASE_DIR/$i
+  npm install ## run the npm install command
+  npm run test ## as a good practice run the unit tests
   docker build . -t $DOCKER_REGISTRY/$DOCKER_USER/$i:2.0.0
 done
 ```
