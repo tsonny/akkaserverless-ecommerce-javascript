@@ -1,6 +1,6 @@
 ## Akka Serverless specific
 **/src/_proto/
-
+**/**/user-function.desc
 
 ## Node.js specific
 # Logs
