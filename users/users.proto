@@ -81,10 +81,13 @@ message AddOrder {
  */ 
 service UserService {
     /**
-     * The entity type determines what kind of prefix entities get
-     * when persisted
+     * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
+     * an entity
      */
-     option (akkaserverless.service).entity.type = ".persistence.User";
+    option (akkaserverless.service) = {
+      type: SERVICE_TYPE_ENTITY
+      component: ".domain.Users"
+    };
 
     /**
      * The AddUser method is called when a new user is added to the 

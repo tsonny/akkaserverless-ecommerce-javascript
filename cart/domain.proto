@@ -35,22 +35,21 @@ package ecommerce.persistence;
 
 /**
  * Imports allow you to use definitions from other protobuf files. In
- * this case, the akkaserverless/annotations.proto contains definitions
+ * this case:
+ * akkaserverless/annotations.proto contains definitions
  * to work with Akka Serverless.
  */
 import "akkaserverless/annotations.proto";
 
 /**
- * This section describes how these domain events relate to 
- * the event sourced entity. The state and events are found in
- * this file.
+ * This section describes how this domain relates to an event sourced entity
  */
 option (akkaserverless.file).event_sourced_entity = {
-    name : "ShoppingCart"
-    entity_type : "ShoppingCart"
-    state : { type: "Cart" }
-    event : { type: "ItemAdded" }
-    event : { type: "ItemRemoved" }
+  name: "ShoppingCart"
+  entity_type: "cart"
+  state: "Cart"
+  events: "ItemAdded"
+  events: "ItemRemoved"
 };
 
 /**

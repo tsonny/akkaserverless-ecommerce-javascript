@@ -82,10 +82,13 @@ message Stock {
  */ 
 service InventoryService {
     /**
-     * The entity type determines what kind of prefix entities get
-     * when persisted
+     * The SERVICE_TYPE_ENTITY lets Akka Serverless know this service implements
+     * an entity
      */
-    option (akkaserverless.service).entity.type = ".persistence.Product";
+    option (akkaserverless.service) = {
+      type: SERVICE_TYPE_ENTITY
+      component: ".domain.Warehouse"
+    };
 
     /**
      * The ReceiveProduct method is called when a new product is added to the 
